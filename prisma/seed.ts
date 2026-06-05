@@ -3,10 +3,10 @@ import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { hash } from "bcryptjs";
 
 const adapter = new PrismaLibSql({
-  url: "file:prisma/dev.db",
+  url: "file:./prisma/dev.db",
 });
 
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient({ adapter } as any);
 
 async function main() {
   console.log("Seeding database...");
