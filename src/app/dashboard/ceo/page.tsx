@@ -91,7 +91,7 @@ export default function CEODashboard() {
 
       <Card title="Project Progress" description="Active research projects and completion status">
         <div className="space-y-4">
-          {projects.map((project) => (
+          {projects.map((project: any) => (
             <div key={project.id} className="p-4 bg-background rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-white font-medium">{project.name}</h4>

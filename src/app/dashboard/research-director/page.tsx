@@ -165,7 +165,7 @@ export default function ResearchDirectorDashboard() {
 
       <Card title="Research Projects" description="All research initiatives by department">
         <div className="space-y-4">
-          {projects.map((project) => (
+          {projects.map((project: any) => (
             <div key={project.id} className="p-4 bg-background rounded-lg">
               <div className="flex items-start justify-between">
                 <div className="flex-1">

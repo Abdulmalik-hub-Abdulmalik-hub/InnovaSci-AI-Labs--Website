@@ -24,7 +24,7 @@ export default async function ModelsPage() {
 
         {models.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {models.map((model) => {
+            {models.map((model: any) => {
               const capabilities = JSON.parse(model.capabilities || "[]");
               const benchmarks = JSON.parse(model.benchmarks || "{}");
               

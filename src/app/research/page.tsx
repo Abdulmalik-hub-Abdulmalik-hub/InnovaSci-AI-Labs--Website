@@ -33,7 +33,7 @@ export default async function ResearchPage() {
                     {dept}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {deptProjects.map((project) => (
+                    {deptProjects.map((project: any) => (
                       <div key={project.id} className="bg-surface border border-border-subtle rounded-lg p-6">
                         <div className="flex items-start justify-between mb-4">
                           <h3 className="text-lg font-semibold text-white">{project.name}</h3>
