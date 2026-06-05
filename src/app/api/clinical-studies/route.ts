@@ -15,7 +15,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(studies.map(s => ({
+    return NextResponse.json(studies.map((s: { id: string; name: string; value: number }) => ({
       id: s.id,
       name: s.name,
       status: s.value > 0 ? "ACTIVE" : "COMPLETED",
