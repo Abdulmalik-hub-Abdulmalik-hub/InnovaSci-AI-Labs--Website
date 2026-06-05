@@ -1,0 +1,365 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// User and Authentication Models
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  password       String
+  name           String
+  role           String
+  department     String?
+  avatar         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  auditLogs      AuditLog[]
+  projects       ResearchProject[]
+  models         AIModel[]
+  datasets       Dataset[]
+  publications   Publication[]
+  jobListings    JobListing[]
+  budgetAllocations BudgetAllocation[]
+  newsArticles   NewsArticle[]
+  events         Event[]
+  updatedSettings SystemSetting[] @relation("SettingUpdater")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String
+  action      String
+  entityType  String
+  entityId    String?
+  details     String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  updatedByUser User?  @relation("SettingUpdater", fields: [updatedBy], references: [id])
+}
+
+model PlatformMetric {
+  id          String   @id @default(cuid())
+  name        String
+  value       Float
+  unit        String?
+  category    String
+  createdAt   DateTime @default(now())
+}
+
+model ResearchProject {
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  status          String
+  department      String
+  budget          Float
+  spentBudget     Float    @default(0)
+  startDate       DateTime
+  endDate         DateTime?
+  progress        Int      @default(0)
+  leadResearcherId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  leadResearcher   User     @relation(fields: [leadResearcherId], references: [id])
+  publications    Publication[]
+  datasets       Dataset[]
+  budgets        BudgetAllocation[]
+}
+
+model AIModel {
+  id              String   @id @default(cuid())
+  name            String
+  version         String
+  description     String
+  status          String
+  parameters      Float
+  contextWindow   Int
+  capabilities    String
+  benchmarks      String
+  apiEndpoint     String?
+  pricing         String?
+  createdById     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  createdBy       User     @relation(fields: [createdById], references: [id])
+  trainingRuns    TrainingRun[]
+}
+
+model TrainingRun {
+  id              String   @id @default(cuid())
+  modelId         String
+  status          String
+  startTime       DateTime
+  endTime         DateTime?
+  duration        Int?
+  datasetSize     Int
+  hyperparameters String
+  metrics         String?
+  createdAt       DateTime @default(now())
+  
+  model           AIModel  @relation(fields: [modelId], references: [id], onDelete: Cascade)
+}
+
+model Dataset {
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  size            String
+  licenseType     String
+  storageLocation String
+  format          String?
+  domain          String?
+  projectId       String?
+  uploadedById    String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  uploadedBy      User     @relation(fields: [uploadedById], references: [id])
+  project         ResearchProject? @relation(fields: [projectId], references: [id])
+}
+
+model Publication {
+  id              String   @id @default(cuid())
+  title           String
+  abstract        String
+  authors         String
+  journal         String?
+  year            Int?
+  doi             String?
+  pdfUrl          String?
+  keywords        String
+  projectId       String?
+  createdById     String
+  status          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  createdBy       User     @relation(fields: [createdById], references: [id])
+  project         ResearchProject? @relation(fields: [projectId], references: [id])
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String
+  category        String
+  version         String
+  status          String
+  parameters      String
+  pricing         String?
+  documentation   String?
+  features        String
+  thumbnail       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  versions        ProductVersion[]
+}
+
+model ProductVersion {
+  id          String   @id @default(cuid())
+  productId   String
+  version     String
+  changelog   String?
+  releasedAt  DateTime @default(now())
+  
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model APIEndpoint {
+  id              String   @id @default(cuid())
+  path            String   @unique
+  method          String
+  description     String
+  status          String
+  lastChecked     DateTime?
+  responseTime    Int?
+  errorRate       Float    @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model SystemError {
+  id          String   @id @default(cuid())
+  endpoint    String?
+  errorType   String
+  message     String
+  stackTrace  String?
+  resolved    Boolean  @default(false)
+  occurredAt  DateTime @default(now())
+}
+
+model JobListing {
+  id              String   @id @default(cuid())
+  title           String
+  department      String
+  type            String
+  level           String
+  description     String
+  requirements    String
+  salaryMin       Float?
+  salaryMax       Float?
+  location        String?
+  remote          Boolean  @default(false)
+  status          String
+  createdById     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  createdBy       User     @relation(fields: [createdById], references: [id])
+  applications    JobApplication[]
+}
+
+model JobApplication {
+  id              String   @id @default(cuid())
+  listingId       String
+  applicantName   String
+  email           String
+  phone           String?
+  resumeUrl       String?
+  coverLetter     String?
+  status          String
+  appliedAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  listing         JobListing @relation(fields: [listingId], references: [id])
+  interviews      Interview[]
+}
+
+model Interview {
+  id            String   @id @default(cuid())
+  applicationId String
+  interviewerId String?
+  type          String
+  scheduledAt   DateTime
+  duration      Int?
+  notes         String?
+  feedback      String?
+  rating        Int?
+  status        String
+  createdAt     DateTime @default(now())
+  
+  application   JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
+
+model BudgetAllocation {
+  id          String   @id @default(cuid())
+  projectId   String?
+  department  String
+  fiscalYear  Int
+  allocated    Float
+  spent        Float    @default(0)
+  category    String
+  notes       String?
+  updatedById  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  project     ResearchProject? @relation(fields: [projectId], references: [id])
+  updatedBy   User     @relation(fields: [updatedById], references: [id])
+}
+
+model Grant {
+  id          String   @id @default(cuid())
+  name        String
+  funder      String
+  amount      Float
+  startDate   DateTime
+  endDate     DateTime
+  status      String
+  description String?
+  createdAt   DateTime @default(now())
+}
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String
+  excerpt     String?
+  category    String
+  status      String
+  authorId    String
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  author      User     @relation(fields: [authorId], references: [id])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  status      String
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  creator     User     @relation(fields: [createdById], references: [id])
+}
+
+model MediaAsset {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  url         String
+  size        String?
+  uploadedAt  DateTime @default(now())
+}
+
+model Innovation {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        String
+  status      String
+  value       Float?
+  partner     String?
+  filedAt     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ComputeResource {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  provider    String
+  status      String
+  specs       String
+  costPerHour Float?
+  createdAt   DateTime @default(now())
+}
+
+model SitemapEntry {
+  id          String   @id @default(cuid())
+  url         String   @unique
+  priority    Float    @default(0.5)
+  changefreq  String   @default("weekly")
+  lastmod     DateTime @default(now())
+}
