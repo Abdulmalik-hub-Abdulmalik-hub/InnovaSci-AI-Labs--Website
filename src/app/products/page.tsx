@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export const revalidate = 60;
 
 async function getProducts() {
-  return prisma.product.findMany({
+  return db.product.findMany({
     orderBy: { createdAt: "desc" },
   });
 }

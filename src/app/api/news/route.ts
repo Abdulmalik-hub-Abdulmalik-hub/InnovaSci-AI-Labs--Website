@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
-    const articles = await prisma.newsArticle.findMany({
+    const articles = await db.newsArticle.findMany({
       include: { author: { select: { name: true } } },
       orderBy: { createdAt: "desc" },
     });
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const article = await prisma.newsArticle.create({
+    const article = await db.newsArticle.create({
       data: {
         ...body,
         authorId: session.user.id,

@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export const revalidate = 60;
 
 async function getProduct(slug: string) {
-  return prisma.product.findUnique({
+  return db.product.findUnique({
     where: { slug },
     include: { versions: { orderBy: { releasedAt: "desc" } } },
   });

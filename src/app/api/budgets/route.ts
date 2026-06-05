@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const budgets = await prisma.budgetAllocation.findMany({
+    const budgets = await db.budgetAllocation.findMany({
       orderBy: { createdAt: "desc" },
     });
 
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const budget = await prisma.budgetAllocation.create({
+    const budget = await db.budgetAllocation.create({
       data: {
         ...body,
         updatedById: session.user.id,

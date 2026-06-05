@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
-    const products = await prisma.product.findMany({
+    const products = await db.product.findMany({
       orderBy: { createdAt: "desc" },
     });
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const product = await prisma.product.create({
+    const product = await db.product.create({
       data: body,
     });
 

@@ -1,21 +1,23 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export const revalidate = 60;
 
 async function getFeaturedData() {
   const [models, publications, products] = await Promise.all([
-    prisma.aIModel.findMany({
+    db.aIModel.findMany({
       where: { status: "ACTIVE" },
       take: 3,
       orderBy: { createdAt: "desc" },
     }),
-    prisma.publication.findMany({
+    db.publication.findMany({
       where: { status: "PUBLISHED" },
       take: 3,
       orderBy: { createdAt: "desc" },
     }),
-    prisma.product.findMany({
+    db.product.findMany({
       where: { status: "ACTIVE" },
       take: 4,
       orderBy: { createdAt: "desc" },

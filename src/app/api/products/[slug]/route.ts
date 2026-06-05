@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
-    const product = await prisma.product.findUnique({
+    const product = await db.product.findUnique({
       where: { slug },
       include: { versions: { orderBy: { releasedAt: "desc" } } },
     });
@@ -26,7 +26,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
     const { slug } = await params;
     const body = await request.json();
     
-    const product = await prisma.product.update({
+    const product = await db.product.update({
       where: { slug },
       data: body,
     });

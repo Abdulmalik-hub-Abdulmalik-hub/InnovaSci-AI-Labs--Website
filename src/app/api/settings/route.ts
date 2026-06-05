@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -11,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const settings = await prisma.systemSetting.findMany({
+    const settings = await db.systemSetting.findMany({
       orderBy: { key: "asc" },
     });
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const setting = await prisma.systemSetting.upsert({
+    const setting = await db.systemSetting.upsert({
       where: { key: body.key },
       update: { value: body.value },
       create: {
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       },
     });
 
-    await prisma.auditLog.create({
+    await db.auditLog.create({
       data: {
         userId: session.user.id,
         action: "UPDATE",

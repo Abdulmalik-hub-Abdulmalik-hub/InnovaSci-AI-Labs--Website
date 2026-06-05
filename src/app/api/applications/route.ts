@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const applications = await prisma.jobApplication.findMany({
+    const applications = await db.jobApplication.findMany({
       include: { listing: { select: { title: true } } },
       orderBy: { appliedAt: "desc" },
     });
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    const application = await prisma.jobApplication.create({
+    const application = await db.jobApplication.create({
       data: body,
     });
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const studies = await prisma.platformMetric.findMany({
+    const studies = await db.platformMetric.findMany({
       where: { category: "CLINICAL_STUDY" },
       orderBy: { createdAt: "desc" },
     });
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const study = await prisma.platformMetric.create({
+    const study = await db.platformMetric.create({
       data: {
         name: body.name,
         value: body.participants,

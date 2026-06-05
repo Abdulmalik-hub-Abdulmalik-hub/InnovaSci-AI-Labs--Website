@@ -1,14 +1,16 @@
 import { MetadataRoute } from "next";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://innovasci.ai";
 
   const [products, publications, datasets, events] = await Promise.all([
-    prisma.product.findMany({ select: { slug: true, updatedAt: true } }),
-    prisma.publication.findMany({ select: { title: true, updatedAt: true } }),
-    prisma.dataset.findMany({ select: { name: true, updatedAt: true } }),
-    prisma.event.findMany({ select: { title: true, startDate: true } }),
+    db.product.findMany({ select: { slug: true, updatedAt: true } }),
+    db.publication.findMany({ select: { title: true, updatedAt: true } }),
+    db.dataset.findMany({ select: { name: true, updatedAt: true } }),
+    db.event.findMany({ select: { title: true, startDate: true } }),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [

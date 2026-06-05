@@ -1,9 +1,11 @@
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export const revalidate = 60;
 
 async function getEvents() {
-  return prisma.event.findMany({
+  return db.event.findMany({
     where: { status: { in: ["SCHEDULED", "ONGOING"] } },
     orderBy: { startDate: "asc" },
   });

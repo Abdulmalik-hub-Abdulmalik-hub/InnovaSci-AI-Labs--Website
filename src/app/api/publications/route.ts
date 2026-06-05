@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const publications = await prisma.publication.findMany({
+    const publications = await db.publication.findMany({
       include: { createdBy: { select: { name: true } } },
       orderBy: { createdAt: "desc" },
     });
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const publication = await prisma.publication.create({
+    const publication = await db.publication.create({
       data: {
         ...body,
         createdById: session.user.id,

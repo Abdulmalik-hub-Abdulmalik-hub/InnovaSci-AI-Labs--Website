@@ -1,9 +1,10 @@
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
 async function getDatasets() {
-  return prisma.dataset.findMany({
+  return db.dataset.findMany({
     orderBy: { createdAt: "desc" },
   });
 }

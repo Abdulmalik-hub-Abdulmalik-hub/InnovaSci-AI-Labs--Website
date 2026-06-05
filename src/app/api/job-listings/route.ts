@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const listings = await prisma.jobListing.findMany({
+    const listings = await db.jobListing.findMany({
       include: { 
         createdBy: { select: { name: true } },
         _count: { select: { applications: true } }
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const listing = await prisma.jobListing.create({
+    const listing = await db.jobListing.create({
       data: {
         ...body,
         createdById: session.user.id,

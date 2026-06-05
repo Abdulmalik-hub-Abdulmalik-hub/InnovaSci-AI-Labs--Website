@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const runs = await prisma.trainingRun.findMany({
+    const runs = await db.trainingRun.findMany({
       orderBy: { createdAt: "desc" },
       take: 50,
     });
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const run = await prisma.trainingRun.create({
+    const run = await db.trainingRun.create({
       data: {
         ...body,
         startTime: new Date(),

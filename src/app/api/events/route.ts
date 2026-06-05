@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, isAuthorized } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
-    const events = await prisma.event.findMany({
+    const events = await db.event.findMany({
       include: { creator: { select: { name: true } } },
       orderBy: { startDate: "asc" },
     });
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     
-    const event = await prisma.event.create({
+    const event = await db.event.create({
       data: {
         ...body,
         createdById: session.user.id,

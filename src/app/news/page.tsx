@@ -1,9 +1,11 @@
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export const revalidate = 60;
 
 async function getArticles() {
-  return prisma.newsArticle.findMany({
+  return db.newsArticle.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { publishedAt: "desc" },
   });
