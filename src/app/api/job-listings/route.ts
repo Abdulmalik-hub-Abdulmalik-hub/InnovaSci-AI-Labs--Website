@@ -13,7 +13,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(listings.map(l => ({ ...l, applicants: l._count.applications })));
+    return NextResponse.json(listings.map((l: any) => ({ ...l, applicants: l._count.applications })));
   } catch (error) {
     console.error("Error fetching listings:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
