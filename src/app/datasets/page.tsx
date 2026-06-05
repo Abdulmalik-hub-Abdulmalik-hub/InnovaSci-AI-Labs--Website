@@ -23,7 +23,7 @@ export default async function DatasetsPage() {
 
         {datasets.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {datasets.map((dataset) => (
+            {datasets.map((dataset: any) => (
               <div key={dataset.id} className="bg-surface border border-border-subtle rounded-lg p-6">
                 <div className="flex items-start justify-between mb-4">
                   <h3 className="text-lg font-semibold text-white">{dataset.name}</h3>
