@@ -24,7 +24,7 @@ export default async function EventsPage() {
 
         {events.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
+            {events.map((event: any) => (
               <div key={event.id} className="bg-surface border border-border-subtle rounded-lg p-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className={`px-2 py-1 rounded text-xs ${
